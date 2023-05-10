@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, TextInput } from "react-native-paper";
+import WidgetBaseLogo from "../../widgets/base/WidgetBaseLogo";
 
 const ScreenUserLogin = ({ navigation }) => {
   // TODO: tambahkan context
@@ -36,6 +37,7 @@ const ScreenUserLogin = ({ navigation }) => {
             justifyContent: "center",
             height: "100%",
           }}>
+          <WidgetBaseLogo />
           <TextInput label="Email" placeholder="Masukan email" />
           <TextInput label="Password" />
           <Button mode="contained">Login</Button>
