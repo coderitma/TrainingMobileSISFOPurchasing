@@ -7,7 +7,7 @@ const WidgetBaseLogo = () => {
       <Image
         style={styles.image}
         source={{
-          uri: "https://icons.iconarchive.com/icons/iconarchive/cute-animal/512/Cute-Turtle-icon.png",
+          uri: "https://icons.iconarchive.com/icons/paomedia/small-n-flat/512/bag-icon.png",
         }}
       />
       <Text variant="titleMedium">Mobile SISFO Purchasing</Text>
