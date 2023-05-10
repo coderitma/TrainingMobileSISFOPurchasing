@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    paddingVertical: 20,
+    paddingVertical: 16,
     fontSize: 16,
     backgroundColor: MD2Colors.amber100,
   },
