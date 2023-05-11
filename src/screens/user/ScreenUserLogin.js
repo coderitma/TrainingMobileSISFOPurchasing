@@ -6,6 +6,7 @@ import { Button, TextInput } from "react-native-paper";
 import WidgetBaseLogo from "../../widgets/base/WidgetBaseLogo";
 import { ServiceUserLogin } from "../../services/ServiceUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import WidgetBaseLoader from "../../widgets/base/WidgetBaseLoader";
 
 const ScreenUserLogin = ({ navigation }) => {
   // TODO: tambahkan context
@@ -21,12 +22,20 @@ const ScreenUserLogin = ({ navigation }) => {
   };
 
   const userLogin = () => {
-    ServiceUserLogin(user)
-      .then(async (token) => {
-        await AsyncStorage.setItem("@token", token);
-        Alert.alert("Berhasil", "Anda berhasil login.");
-      })
-      .catch((error) => console.log(error));
+    setComplete(false);
+    const debounce = _.debounce(() => {
+      ServiceUserLogin(user)
+        .then(async (token) => {
+          await AsyncStorage.setItem("@token", token);
+          Alert.alert("Berhasil", "Anda berhasil login.");
+        })
+        .catch((error) => console.log(error))
+        .finally(() => {
+          setComplete(true);
+        });
+    }, 500);
+
+    debounce();
   };
 
   useEffect(() => {
@@ -72,6 +81,7 @@ const ScreenUserLogin = ({ navigation }) => {
           </Button>
         </ScrollView>
       )}
+      <WidgetBaseLoader complete={complete} />
     </SafeAreaView>
   );
 };
