@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, TextInput } from "react-native-paper";
@@ -7,10 +7,11 @@ import WidgetBaseLogo from "../../widgets/base/WidgetBaseLogo";
 import { ServiceUserLogin } from "../../services/ServiceUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import WidgetBaseLoader from "../../widgets/base/WidgetBaseLoader";
+import { ContextUserAuthentication } from "../../context/ContextUser";
 
 const ScreenUserLogin = ({ navigation }) => {
-  // TODO: tambahkan context
-  // const [, setIsAuthenticated] = useContext(ContextUserAuthentication)
+  const [, setIsAuthenticated] = useContext(ContextUserAuthentication);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -28,6 +29,7 @@ const ScreenUserLogin = ({ navigation }) => {
         .then(async (token) => {
           await AsyncStorage.setItem("@token", token);
           Alert.alert("Berhasil", "Anda berhasil login.");
+          setIsAuthenticated(true);
         })
         .catch((error) => console.log(error))
         .finally(() => {
