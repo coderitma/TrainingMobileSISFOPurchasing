@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { debounce } from "lodash";
 import { useEffect, useState } from "react";
 import { Alert, SafeAreaView, ScrollView, Text, View } from "react-native";
 import WidgetBaseLogo from "../../widgets/base/WidgetBaseLogo";
@@ -19,15 +19,21 @@ const ScreenUserRegister = ({ navigation }) => {
   };
 
   const userRegister = () => {
-    ServiceUserRegister(user)
-      .then((data) => {
-        console.log(data);
-        Alert.alert("Berhasil", "Anda berhasil register, silahkan login.");
-        navigation.goBack();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setComplete(false);
+    const debounce = _.debounce(() => {
+      ServiceUserRegister(user)
+        .then((data) => {
+          console.log(data);
+          Alert.alert("Berhasil", "Anda berhasil register, silahkan login.");
+          navigation.goBack();
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => setComplete(true));
+    }, 500);
+
+    debounce();
   };
 
   useEffect(() => {
