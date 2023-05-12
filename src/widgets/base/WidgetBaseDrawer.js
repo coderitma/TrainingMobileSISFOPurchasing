@@ -1,4 +1,3 @@
-import * as React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import WidgetBaseSidebar from "./WidgetBaseSidebar";
@@ -6,11 +5,12 @@ import { RouterUserNotAuthenticated } from "../../routers/RouterUser";
 import { useHookUserAuthenticationInterface } from "../../hooks/HookUser";
 import { ContextUserAuthentication } from "../../context/ContextUser";
 import { Text } from "react-native";
+import { useContext } from "react";
 
 const Drawer = createDrawerNavigator();
 
 const ScreenContoh = () => {
-  const [, setIsAuthenticated] = React.useContext(ContextUserAuthentication);
+  const [, setIsAuthenticated] = useContext(ContextUserAuthentication);
   return (
     <Text style={{ marginTop: 40 }} onPress={() => setIsAuthenticated(false)}>
       Hello Ini sudah login
