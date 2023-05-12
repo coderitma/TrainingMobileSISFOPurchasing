@@ -1,7 +1,10 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import WidgetBaseSidebar from "./WidgetBaseSidebar";
-import { RouterUserNotAuthenticated } from "../../routers/RouterUser";
+import {
+  RouterUserAuthenticated,
+  RouterUserNotAuthenticated,
+} from "../../routers/RouterUser";
 import { useHookUserAuthenticationInterface } from "../../hooks/HookUser";
 import { ContextUserAuthentication } from "../../context/ContextUser";
 import { Text } from "react-native";
@@ -47,10 +50,17 @@ export default function WidgetBaseDrawer() {
             <>
               <Drawer.Screen
                 options={{
-                  drawerLabel: "Master Barang",
+                  drawerLabel: "Barang",
                 }}
                 name="RouterBarang"
                 component={RouterBarangAuthenticated}
+              />
+              <Drawer.Screen
+                options={{
+                  drawerLabel: "Settings",
+                }}
+                name="RouterUser"
+                component={RouterUserAuthenticated}
               />
             </>
           )}

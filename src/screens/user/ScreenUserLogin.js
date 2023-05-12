@@ -30,6 +30,7 @@ const ScreenUserLogin = ({ navigation }) => {
           await AsyncStorage.setItem("@token", token);
           Alert.alert("Berhasil", "Anda berhasil login.");
           setIsAuthenticated(true);
+          navigation.navigate("RouterBarang");
         })
         .catch((error) => console.log(error))
         .finally(() => {
