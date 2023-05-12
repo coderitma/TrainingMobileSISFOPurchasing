@@ -6,6 +6,7 @@ import { useHookUserAuthenticationInterface } from "../../hooks/HookUser";
 import { ContextUserAuthentication } from "../../context/ContextUser";
 import { Text } from "react-native";
 import { useContext } from "react";
+import { RouterBarangAuthenticated } from "../../routers/RouterBarang";
 
 const Drawer = createDrawerNavigator();
 
@@ -46,10 +47,10 @@ export default function WidgetBaseDrawer() {
             <>
               <Drawer.Screen
                 options={{
-                  drawerLabel: "Contoh",
+                  drawerLabel: "Master Barang",
                 }}
-                name="Contoh"
-                component={ScreenContoh}
+                name="RouterBarang"
+                component={RouterBarangAuthenticated}
               />
             </>
           )}
