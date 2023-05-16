@@ -8,6 +8,7 @@ import {
 import { useHookUserAuthenticationInterface } from "../../hooks/HookUser";
 import { ContextUserAuthentication } from "../../context/ContextUser";
 import { RouterBarangAuthenticated } from "../../routers/RouterBarang";
+import { RouterPembelianAuthenticated } from "../../routers/RouterPembelian";
 
 const Drawer = createDrawerNavigator();
 
@@ -43,6 +44,13 @@ export default function WidgetBaseDrawer() {
                 }}
                 name="RouterBarang"
                 component={RouterBarangAuthenticated}
+              />
+              <Drawer.Screen
+                options={{
+                  drawerLabel: "Pembelian",
+                }}
+                name="RouterPembelian"
+                component={RouterPembelianAuthenticated}
               />
               <Drawer.Screen
                 options={{
