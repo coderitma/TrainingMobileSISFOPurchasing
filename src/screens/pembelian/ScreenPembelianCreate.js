@@ -1,8 +1,13 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { Appbar, TextInput } from "react-native-paper";
+import { Platform, ScrollView, View } from "react-native";
+import { Appbar, Divider, TextInput } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  ServiceBaseHumanDate,
+  ServiceBaseRandomID,
+} from "../../services/ServiceBase";
 
 const ScreenPembelianCreate = ({ navigation }) => {
   const [pembelian, setPembelian] = useState({});
@@ -12,7 +17,12 @@ const ScreenPembelianCreate = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleInput = (name, value) => {
+    if (name === "tanggal") setShowDatePicker(false);
     setPembelian((values) => ({ ...values, [name]: value }));
+  };
+
+  const randomFaktur = () => {
+    handleInput("faktur", ServiceBaseRandomID("BELI"));
   };
 
   useEffect(() => {
@@ -39,9 +49,31 @@ const ScreenPembelianCreate = ({ navigation }) => {
               onChangeText={(text) => handleInput("faktur", text)}
               label="Nomor Faktur"
               editable={false}
-              right={<TextInput.Icon onPress={() => {}} icon="reload" />}
+              right={
+                <TextInput.Icon onPress={() => randomFaktur()} icon="reload" />
+              }
+            />
+            <TextInput
+              label="Tanggal"
+              editable={false}
+              value={`${ServiceBaseHumanDate(pembelian.tanggal) || ""}`}
+              right={
+                <TextInput.Icon
+                  onPress={() => setShowDatePicker(true)}
+                  icon="calendar"
+                />
+              }
             />
           </View>
+          <Divider />
+          {showDatePicker && (
+            <DateTimePicker
+              value={pembelian.tanggal || new Date()}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={(event, value) => handleInput("tanggal", value)}
+            />
+          )}
         </ScrollView>
       )}
     </SafeAreaProvider>
