@@ -6,9 +6,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   ServiceBaseHumanDate,
+  ServiceBaseIsDuplicateArray,
   ServiceBaseRandomID,
 } from "../../services/ServiceBase";
 import WidgetPemasokChoice from "../../widgets/pemasok/WidgetPemasokChoice";
+import WidgetBarangChoice from "../../widgets/barang/WidgetBarangChoice";
 
 const ScreenPembelianCreate = ({ navigation }) => {
   const [pembelian, setPembelian] = useState({});
@@ -29,6 +31,55 @@ const ScreenPembelianCreate = ({ navigation }) => {
   const addPemasok = (pemasok) => {
     const debounce = _.debounce(() => setPemasok(pemasok), 100);
     debounce();
+  };
+
+  const update = (item) => {
+    const debounce = _.debounce(() => {
+      setDaftarItemBeli((values) => {
+        const items = [...values];
+        const b = items.find((value) => value.kodeBarang === item.kodeBarang);
+        const i = items.findIndex(
+          (value) => value.kodeBarang === item.kodeBarang
+        );
+
+        b.jumlahBeli = b.jumlahBeli + 1;
+        b.subtotal = b.jumlahBeli * b.hargaBeli;
+        items[i] = b;
+        return items;
+      });
+    }, 100);
+
+    debounce();
+  };
+
+  const add = (item) => {
+    const debounce = _.debounce(() => {
+      const payload = {
+        kodeBarang: item.kodeBarang,
+        namaBarang: item.namaBarang,
+        hargaBeli: item.hargaBeli,
+        jumlahBeli: 1,
+        subtotal: 1 * item.hargaBeli,
+      };
+
+      setDaftarItemBeli((values) => [...values, payload]);
+    }, 100);
+
+    debounce();
+  };
+
+  const addOrUpdate = (item) => {
+    const isDuplicate = ServiceBaseIsDuplicateArray(
+      daftarItemBeli,
+      item.kodeBarang,
+      "kodeBarang"
+    );
+
+    if (isDuplicate) {
+      update(item);
+    } else {
+      add(item);
+    }
   };
 
   useEffect(() => {
@@ -91,6 +142,8 @@ const ScreenPembelianCreate = ({ navigation }) => {
           )}
 
           <Divider />
+
+          <WidgetBarangChoice onPress={addOrUpdate} />
         </ScrollView>
       )}
     </SafeAreaProvider>

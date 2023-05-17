@@ -64,3 +64,8 @@ export const ServiceBaseRandomID = (prefix = "ID") => {
   const date = new Date();
   return `${prefix.toUpperCase()}-${date.getTime()}`;
 };
+
+export const ServiceBaseIsDuplicateArray = (items, val, by) => {
+  let flatItems = items.map((value) => value[by]);
+  return flatItems.includes(val);
+};
