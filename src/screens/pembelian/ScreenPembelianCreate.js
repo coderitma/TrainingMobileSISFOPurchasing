@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
-import { Appbar, Divider, TextInput } from "react-native-paper";
+import { Appbar, Divider, List, TextInput } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -24,6 +24,11 @@ const ScreenPembelianCreate = ({ navigation }) => {
 
   const randomFaktur = () => {
     handleInput("faktur", ServiceBaseRandomID("BELI"));
+  };
+
+  const addPemasok = (pemasok) => {
+    const debounce = _.debounce(() => setPemasok(pemasok), 100);
+    debounce();
   };
 
   useEffect(() => {
@@ -76,7 +81,16 @@ const ScreenPembelianCreate = ({ navigation }) => {
             />
           )}
 
-          <WidgetPemasokChoice />
+          <WidgetPemasokChoice onPress={addPemasok} />
+
+          {pemasok.kodePemasok && (
+            <List.Item
+              title={pemasok.namaPemasok}
+              description={pemasok.teleponPemasok}
+            />
+          )}
+
+          <Divider />
         </ScrollView>
       )}
     </SafeAreaProvider>

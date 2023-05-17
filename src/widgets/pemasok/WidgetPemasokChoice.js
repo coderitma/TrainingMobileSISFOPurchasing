@@ -14,7 +14,7 @@ import {
 import { ServicePemasokList } from "../../services/ServicePemasok";
 import WidgetBaseLoader from "../base/WidgetBaseLoader";
 
-const WidgetPemasokChoice = () => {
+const WidgetPemasokChoice = ({ onPress }) => {
   const [daftarPemasok, setDaftarPemasok] = useState([]);
   const [complete, setComplete] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -77,7 +77,14 @@ const WidgetPemasokChoice = () => {
                   </DataTable.Header>
 
                   {daftarPemasok.map((pemasok, index) => (
-                    <DataTable.Row key={index} onPress={() => {}}>
+                    <DataTable.Row
+                      key={index}
+                      onPress={() => {
+                        _.debounce(() => {
+                          onPress(pemasok);
+                          setVisible(false);
+                        }, 100)();
+                      }}>
                       <DataTable.Cell>{pemasok.kodePemasok}</DataTable.Cell>
                       <DataTable.Cell>{pemasok.namaPemasok}</DataTable.Cell>
                       <DataTable.Cell numeric>
