@@ -8,6 +8,7 @@ import {
   ServiceBaseHumanDate,
   ServiceBaseRandomID,
 } from "../../services/ServiceBase";
+import WidgetPemasokChoice from "../../widgets/pemasok/WidgetPemasokChoice";
 
 const ScreenPembelianCreate = ({ navigation }) => {
   const [pembelian, setPembelian] = useState({});
@@ -74,6 +75,8 @@ const ScreenPembelianCreate = ({ navigation }) => {
               onChange={(event, value) => handleInput("tanggal", value)}
             />
           )}
+
+          <WidgetPemasokChoice />
         </ScrollView>
       )}
     </SafeAreaProvider>
