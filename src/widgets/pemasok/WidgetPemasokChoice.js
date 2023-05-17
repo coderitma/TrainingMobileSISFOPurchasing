@@ -1,23 +1,41 @@
 import _ from "lodash";
 import { useState, useEffect } from "react";
 import { Modal } from "react-native";
+import { ScrollView } from "react-native";
 import {
   ActivityIndicator,
   Appbar,
+  DataTable,
   List,
   Portal,
   Provider,
+  Searchbar,
 } from "react-native-paper";
+import { ServicePemasokList } from "../../services/ServicePemasok";
+import WidgetBaseLoader from "../base/WidgetBaseLoader";
 
 const WidgetPemasokChoice = () => {
   const [daftarPemasok, setDaftarPemasok] = useState([]);
   const [complete, setComplete] = useState(false);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
+  const pemasokList = () => {
     setComplete(false);
-    const debounce = _.debounce(() => setComplete(true), 500);
+
+    const debounce = _.debounce(() => {
+      ServicePemasokList()
+        .then(({ results }) => {
+          setDaftarPemasok(results);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setComplete(true));
+    }, 500);
+
     debounce();
+  };
+
+  useEffect(() => {
+    pemasokList();
   }, []);
 
   return (
@@ -35,6 +53,42 @@ const WidgetPemasokChoice = () => {
               />
               <Appbar.Content title="Pilih Pemasok" />
             </Appbar.Header>
+
+            {complete && (
+              <ScrollView
+                contentContainerStyle={{
+                  paddingBottom: 24,
+                }}>
+                <Searchbar
+                  placeholder="Search"
+                  onChangeText={(text) => {}}
+                  onSubmitEdit={() => {}}
+                  style={{
+                    marginHorizontal: 16,
+                    marginVertical: 16,
+                  }}
+                />
+
+                <DataTable>
+                  <DataTable.Header>
+                    <DataTable.Title>Kode Pemasok</DataTable.Title>
+                    <DataTable.Title>Nama Pemasok</DataTable.Title>
+                    <DataTable.Title numeric>Telepon</DataTable.Title>
+                  </DataTable.Header>
+
+                  {daftarPemasok.map((pemasok, index) => (
+                    <DataTable.Row key={index} onPress={() => {}}>
+                      <DataTable.Cell>{pemasok.kodePemasok}</DataTable.Cell>
+                      <DataTable.Cell>{pemasok.namaPemasok}</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {pemasok.teleponPemasok}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  ))}
+                </DataTable>
+              </ScrollView>
+            )}
+            <WidgetBaseLoader complete={complete} />
           </Modal>
         </Portal>
 
