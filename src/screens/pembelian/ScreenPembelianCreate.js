@@ -1,8 +1,9 @@
 import _ from "lodash";
 import { useEffect, useMemo, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
+import { Alert, Platform, ScrollView, View } from "react-native";
 import {
   Appbar,
+  Button,
   DataTable,
   Divider,
   List,
@@ -11,12 +12,17 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
+  ServiceBaseFileSharing,
   ServiceBaseHumanDate,
   ServiceBaseIsDuplicateArray,
   ServiceBaseRandomID,
 } from "../../services/ServiceBase";
 import WidgetPemasokChoice from "../../widgets/pemasok/WidgetPemasokChoice";
 import WidgetBarangChoice from "../../widgets/barang/WidgetBarangChoice";
+import {
+  ServicePembelianCreate,
+  ServicePembelianShare,
+} from "../../services/ServicePembelian";
 
 const ScreenPembelianCreate = ({ navigation }) => {
   const [pembelian, setPembelian] = useState({});
@@ -116,6 +122,60 @@ const ScreenPembelianCreate = ({ navigation }) => {
     return kembalian;
   }, [pembelian.dibayar, daftarItemBeli]);
 
+  const askShare = () => {
+    const actions = [
+      {
+        text: "Ya",
+        onPress: pembelianShare,
+      },
+      {
+        text: "Batal",
+        onPress: () => {},
+        style: "cancel",
+      },
+    ];
+    Alert.alert("Share faktur?", null, actions);
+  };
+
+  const pembelianShare = () => {
+    setComplete(false);
+
+    const debounce = _.debounce(() => {
+      ServicePembelianShare(pembelian.faktur)
+        .then(async (blob) => {
+          ServiceBaseFileSharing("FAKTUR", blob);
+          // clear
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setComplete(true));
+    }, 500);
+
+    debounce();
+  };
+
+  const pembelianCreate = () => {
+    setComplete(false);
+
+    const debounce = _.debounce(() => {
+      pembelian.kodePemasok = pemasok.kodePemasok;
+
+      const payload = {
+        ...pembelian,
+        items: [...daftarItemBeli],
+      };
+
+      ServicePembelianCreate(payload)
+        .then((data) => {
+          // TODO: melakukan print/share data
+          askShare();
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setComplete(true));
+    }, 500);
+
+    debounce();
+  };
+
   useEffect(() => {
     setComplete(false);
     const debounce = _.debounce(() => {
@@ -182,9 +242,7 @@ const ScreenPembelianCreate = ({ navigation }) => {
           {daftarItemBeli.map((barang, index) => (
             <List.Item
               key={index}
-              title={`${barang.namaBarang} #${barang.kodeBarang} ${
-                barang.jumlahBeli || ""
-              }`}
+              title={`${barang.namaBarang} #${barang.kodeBarang}`}
               description={`${barang.hargaBeli}`}
               right={(props) => (
                 <>
@@ -227,6 +285,10 @@ const ScreenPembelianCreate = ({ navigation }) => {
               error={calculateBayar < 0}
               onChangeText={(text) => handleInput("dibayar", parseInt(text))}
             />
+
+            <Button onPress={pembelianCreate} mode="contained">
+              Simpan
+            </Button>
           </View>
         </ScrollView>
       )}

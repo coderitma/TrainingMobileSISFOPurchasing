@@ -102,7 +102,7 @@ const WidgetBarangChoice = ({ onPress }) => {
 
         <List.Section style={{ paddingHorizontal: 16 }}>
           <List.Item
-            title="Pilih Pemasok"
+            title="Pilih Barang"
             onPress={() => setVisible(true)}
             left={() => (
               <>
