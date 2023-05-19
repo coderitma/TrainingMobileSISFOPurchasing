@@ -1,7 +1,13 @@
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
-import { Appbar, Divider, List, TextInput } from "react-native-paper";
+import {
+  Appbar,
+  DataTable,
+  Divider,
+  List,
+  TextInput,
+} from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -98,6 +104,18 @@ const ScreenPembelianCreate = ({ navigation }) => {
     }
   };
 
+  const calculateSubtotal = useMemo(() => {
+    const total = _.sumBy(daftarItemBeli, "subtotal");
+    handleInput("total", total);
+    return total;
+  }, [daftarItemBeli]);
+
+  const calculateBayar = useMemo(() => {
+    const kembalian = pembelian.dibayar - calculateSubtotal;
+    handleInput("kembali", kembalian);
+    return kembalian;
+  }, [pembelian.dibayar, daftarItemBeli]);
+
   useEffect(() => {
     setComplete(false);
     const debounce = _.debounce(() => {
@@ -160,11 +178,13 @@ const ScreenPembelianCreate = ({ navigation }) => {
           <Divider />
 
           <WidgetBarangChoice onPress={addOrUpdate} />
-
+          {/* TODO: add currency */}
           {daftarItemBeli.map((barang, index) => (
             <List.Item
               key={index}
-              title={`${barang.namaBarang} #${barang.kodeBarang} ${barang.jumlahBeli}`}
+              title={`${barang.namaBarang} #${barang.kodeBarang} ${
+                barang.jumlahBeli || ""
+              }`}
               description={`${barang.hargaBeli}`}
               right={(props) => (
                 <>
@@ -179,6 +199,35 @@ const ScreenPembelianCreate = ({ navigation }) => {
               )}
             />
           ))}
+
+          <Divider />
+
+          <DataTable>
+            <DataTable.Row>
+              <DataTable.Title>Jumlah Pembelian</DataTable.Title>
+              <DataTable.Cell numeric>
+                {daftarItemBeli.length || 0}
+              </DataTable.Cell>
+            </DataTable.Row>
+            <DataTable.Row>
+              <DataTable.Title>Total</DataTable.Title>
+              <DataTable.Cell numeric>{pembelian.total || 0}</DataTable.Cell>
+            </DataTable.Row>
+            <DataTable.Row>
+              <DataTable.Title>Kembalian</DataTable.Title>
+              <DataTable.Cell numeric>{pembelian.kembali || 0}</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
+
+          <Divider />
+          <View style={{ marginHorizontal: 16, gap: 16, marginVertical: 24 }}>
+            <TextInput
+              value={`${pembelian.dibayar || ""}`}
+              label="Dibayar"
+              error={calculateBayar < 0}
+              onChangeText={(text) => handleInput("dibayar", parseInt(text))}
+            />
+          </View>
         </ScrollView>
       )}
     </SafeAreaProvider>
