@@ -24,6 +24,22 @@ const ScreenPembelianCreate = ({ navigation }) => {
     setPembelian((values) => ({ ...values, [name]: value }));
   };
 
+  const handleInputItemBeli = (index, value, item) => {
+    setDaftarItemBeli((values) => {
+      const qty = parseInt(value);
+      const items = [...values];
+
+      if (qty === 0) {
+        items.splice(index, 1);
+      } else {
+        items[index].jumlahBeli = qty;
+        items[index].subtotal = item.jumlahBeli * item.hargaBeli;
+      }
+
+      return items;
+    });
+  };
+
   const randomFaktur = () => {
     handleInput("faktur", ServiceBaseRandomID("BELI"));
   };
@@ -144,6 +160,25 @@ const ScreenPembelianCreate = ({ navigation }) => {
           <Divider />
 
           <WidgetBarangChoice onPress={addOrUpdate} />
+
+          {daftarItemBeli.map((barang, index) => (
+            <List.Item
+              key={index}
+              title={`${barang.namaBarang} #${barang.kodeBarang} ${barang.jumlahBeli}`}
+              description={`${barang.hargaBeli}`}
+              right={(props) => (
+                <>
+                  <TextInput
+                    mode="outlined"
+                    value={`${barang.jumlahBeli || ""}`}
+                    onChangeText={(text) =>
+                      handleInputItemBeli(index, text, barang)
+                    }
+                  />
+                </>
+              )}
+            />
+          ))}
         </ScrollView>
       )}
     </SafeAreaProvider>
